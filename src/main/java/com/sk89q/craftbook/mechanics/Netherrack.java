@@ -45,13 +45,16 @@ public class Netherrack extends AbstractCraftBookMechanic {
         if(event.isMinor())
             return;
 
-        if(event.getBlock().getType() != Material.NETHERRACK) return;
+        Block block = event.getBlock();
+        Material type = block.getType();
+        if(type != Material.NETHERRACK && type != Material.SOUL_SOIL) return;
 
         Block above = event.getBlock().getRelative(0, 1, 0);
 
         if (event.isOn() && canReplaceWithFire(above.getType())) {
-            above.setType(Material.FIRE);
-        } else if (!event.isOn() && above != null && above.getType() == Material.FIRE) {
+            Material fire = type == Material.NETHERRACK ? Material.FIRE : Material.SOUL_FIRE;
+            above.setType(fire);
+        } else if (!event.isOn() && (above.getType() == Material.FIRE || above.getType() == Material.SOUL_FIRE)) {
             above.setType(Material.AIR);
         }
     }
@@ -62,10 +65,12 @@ public class Netherrack extends AbstractCraftBookMechanic {
         if(!EventUtil.passesFilter(event)) return;
 
         if (event.getAction() != Action.LEFT_CLICK_BLOCK || event.getHand() != EquipmentSlot.HAND) return;
-        if(event.getClickedBlock().getType() != Material.NETHERRACK) return;
+        Block block = event.getClickedBlock();
+        if (block == null) return;
+        if(block.getType() != Material.NETHERRACK && block.getType() != Material.SOUL_SOIL) return;
         if (event.getBlockFace() == BlockFace.UP) {
             Block fire = event.getClickedBlock().getRelative(event.getBlockFace());
-            if (fire.getType() == Material.FIRE && fire.getRelative(BlockFace.DOWN).isBlockPowered()) {
+            if ((fire.getType() == Material.FIRE || fire.getType() == Material.SOUL_FIRE) && fire.getRelative(BlockFace.DOWN).isBlockPowered()) {
                 event.setCancelled(true);
             }
         }
@@ -79,6 +84,8 @@ public class Netherrack extends AbstractCraftBookMechanic {
             case VINE:
             case DEAD_BUSH:
             case AIR:
+            case VOID_AIR:
+            case CAVE_AIR:
                 return true;
             default:
                 return false;

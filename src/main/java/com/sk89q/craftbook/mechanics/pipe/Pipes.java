@@ -16,6 +16,7 @@ import com.sk89q.craftbook.util.ProtectionUtil;
 import com.sk89q.craftbook.util.RegexUtil;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.craftbook.util.VerifyUtil;
+import com.sk89q.craftbook.util.events.BlockPowerEvent;
 import com.sk89q.craftbook.util.events.SourcedBlockRedstoneEvent;
 import com.sk89q.util.yaml.YAMLProcessor;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -466,7 +467,18 @@ public class Pipes extends AbstractCraftBookMechanic {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler
+    public void onStickyPistonPower(BlockPowerEvent event) {
+        if (!event.on) return;
+        Block block = event.getBlock();
+        ChangedSign sign = getSignOnPiston(block);
+        System.out.println("test");
+        if (pipeRequireSign && sign == null) return;
+
+        startPipe(block, new ArrayList<>(), false);
+    }
+
+    /*@EventHandler(priority = EventPriority.HIGH)
     public void onBlockRedstoneChange(SourcedBlockRedstoneEvent event){
 
         if (event.getBlock().getType() == Material.STICKY_PISTON) {
@@ -480,7 +492,7 @@ public class Pipes extends AbstractCraftBookMechanic {
 
             startPipe(event.getBlock(), new ArrayList<>(), false);
         }
-    }
+    }*/
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPipeRequest(PipeRequestEvent event) {

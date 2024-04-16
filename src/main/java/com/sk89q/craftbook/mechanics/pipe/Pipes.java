@@ -472,7 +472,6 @@ public class Pipes extends AbstractCraftBookMechanic {
         if (!event.on) return;
         Block block = event.getBlock();
         ChangedSign sign = getSignOnPiston(block);
-        System.out.println("test");
         if (pipeRequireSign && sign == null) return;
 
         startPipe(block, new ArrayList<>(), false);

@@ -1,6 +1,10 @@
 package com.sk89q.craftbook.mechanics;
 
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.craftbook.bukkit.RedstonePowerListener;
+import com.sk89q.craftbook.util.events.BlockPowerEvent;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Jukebox;
 import org.bukkit.event.EventHandler;
 
@@ -10,15 +14,20 @@ import com.sk89q.util.yaml.YAMLProcessor;
 
 public class RedstoneJukebox extends AbstractCraftBookMechanic {
 
-    @EventHandler
-    public void onRedstonePower(SourcedBlockRedstoneEvent event) {
+    private NamespacedKey jukeboxKey = new NamespacedKey(CraftBookPlugin.inst(), "jukebox");
 
-        if(event.isMinor()) return;
-        if(event.getBlock().getType() != Material.JUKEBOX) return; //Only listen for Jukeboxes.
+    public RedstoneJukebox() {
+        RedstonePowerListener.addListener(jukeboxKey, b -> b.getType() == Material.JUKEBOX);
+    }
+
+    @EventHandler
+    public void onRedstonePower(BlockPowerEvent event) {
+
+        if(!event.hasKey(jukeboxKey)) return;
         Jukebox juke = (org.bukkit.block.Jukebox) event.getBlock().getState(false);
         if (!juke.hasRecord()) return;
         juke.stopPlaying();
-        if (event.isOn()) {
+        if (event.on) {
             juke.setPlaying(juke.getPlaying());
             juke.update();
         }

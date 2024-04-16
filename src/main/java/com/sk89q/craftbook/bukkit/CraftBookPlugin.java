@@ -683,7 +683,7 @@ public class CraftBookPlugin extends JavaPlugin {
 
         logDebugMessage("Registring managers!", "startup");
         getServer().getPluginManager().registerEvents(managerAdapter, inst());
-        getServer().getPluginManager().registerEvents(new StickyPistonPowerListener(), inst());
+        getServer().getPluginManager().registerEvents(new RedstonePowerListener(), inst());
 
         if(config.easterEggs) {
             Bukkit.getScheduler().runTaskLater(this, new Runnable() {

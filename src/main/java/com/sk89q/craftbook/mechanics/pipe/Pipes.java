@@ -4,6 +4,7 @@ import com.sk89q.craftbook.AbstractCraftBookMechanic;
 import com.sk89q.craftbook.ChangedSign;
 import com.sk89q.craftbook.CraftBookPlayer;
 import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.craftbook.bukkit.RedstonePowerListener;
 import com.sk89q.craftbook.bukkit.util.CraftBookBukkitUtil;
 import com.sk89q.craftbook.util.BlockSyntax;
 import com.sk89q.craftbook.util.BlockUtil;
@@ -17,13 +18,13 @@ import com.sk89q.craftbook.util.RegexUtil;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.craftbook.util.VerifyUtil;
 import com.sk89q.craftbook.util.events.BlockPowerEvent;
-import com.sk89q.craftbook.util.events.SourcedBlockRedstoneEvent;
 import com.sk89q.util.yaml.YAMLProcessor;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -467,8 +468,15 @@ public class Pipes extends AbstractCraftBookMechanic {
         }
     }
 
+    private NamespacedKey stickyPistonKey = new NamespacedKey(CraftBookPlugin.inst(), "sticky_piston");
+
+    public Pipes() {
+        RedstonePowerListener.addListener(stickyPistonKey, b -> b.getType() == Material.STICKY_PISTON);
+    }
+
     @EventHandler
     public void onStickyPistonPower(BlockPowerEvent event) {
+        if (!event.hasKey(stickyPistonKey)) return;
         if (!event.on) return;
         Block block = event.getBlock();
         ChangedSign sign = getSignOnPiston(block);

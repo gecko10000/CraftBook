@@ -91,7 +91,7 @@ public final class ItemUtil {
                 if(!ItemUtil.isStackValid(fil))
                     continue;
 
-                if(ItemUtil.areItemsIdentical(fil, stack)) {
+                if(ItemUtil.areItemsSimilar(fil, stack)) {
                     passesFilters = true;
                     break;
                 } else
@@ -105,7 +105,7 @@ public final class ItemUtil {
 
                 if(!ItemUtil.isStackValid(fil))
                     continue;
-                if(ItemUtil.areItemsIdentical(fil, stack)) {
+                if(ItemUtil.areItemsSimilar(fil, stack)) {
                     passesFilters = false;
                     break;
                 }

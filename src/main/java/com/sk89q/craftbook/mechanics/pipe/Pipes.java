@@ -171,10 +171,10 @@ public class Pipes extends AbstractCraftBookMechanic {
 
                 if (!event.isCancelled()) {
                     if (InventoryUtil.doesBlockHaveInventory(fac)) {
-                        InventoryHolder holder = (InventoryHolder) fac.getState();
+                        InventoryHolder holder = (InventoryHolder) fac.getState(false);
                         newItems.addAll(InventoryUtil.addItemsToInventory(holder, event.getItems().toArray(new ItemStack[event.getItems().size()])));
                     } else if (fac.getType() == Material.JUKEBOX) {
-                        Jukebox juke = (Jukebox) fac.getState();
+                        Jukebox juke = (Jukebox) fac.getState(false);
                         List<ItemStack> its = new ArrayList<>(event.getItems());
                         if (juke.getPlaying() != Material.AIR) {
                             Iterator<ItemStack> iter = its.iterator();
@@ -218,7 +218,7 @@ public class Pipes extends AbstractCraftBookMechanic {
                 if(filteredItems.isEmpty())
                     continue;
 
-                Dropper dropper = (Dropper) bl.getState();
+                Dropper dropper = (Dropper) bl.getState(false);
                 List<ItemStack> newItems =
                         new ArrayList<>(dropper.getInventory().addItem(filteredItems.toArray(new ItemStack[filteredItems.size()])).values());
 
@@ -355,7 +355,7 @@ public class Pipes extends AbstractCraftBookMechanic {
                     || fac.getType() == Material.HOPPER
                     || fac.getType() == Material.BARREL
                     || Tag.SHULKER_BOXES.isTagged(fac.getType())) {
-                for (ItemStack stack : ((InventoryHolder) fac.getState()).getInventory().getContents()) {
+                for (ItemStack stack : ((InventoryHolder) fac.getState(false)).getInventory().getContents()) {
 
                     if (!ItemUtil.isStackValid(stack))
                         continue;
@@ -364,7 +364,7 @@ public class Pipes extends AbstractCraftBookMechanic {
                         continue;
 
                     items.add(stack);
-                    ((InventoryHolder) fac.getState()).getInventory().removeItem(stack);
+                    ((InventoryHolder) fac.getState(false)).getInventory().removeItem(stack);
                     if (pipeStackPerPull)
                         break;
                 }
@@ -381,12 +381,13 @@ public class Pipes extends AbstractCraftBookMechanic {
                 if (!items.isEmpty()) {
                     for (ItemStack item : items) {
                         if (item == null) continue;
-                        leftovers.addAll(((InventoryHolder) fac.getState()).getInventory().addItem(item).values());
+                        leftovers.addAll(((InventoryHolder) fac.getState(false)).getInventory().addItem(item).values());
                     }
                 }
+                fac.getState(false).update();
             } else if (fac.getType() == Material.FURNACE || fac.getType() == Material.BLAST_FURNACE || fac.getType() == Material.SMOKER) {
 
-                Furnace f = (Furnace) fac.getState();
+                Furnace f = (Furnace) fac.getState(false);
 
                 if (!ItemUtil.isStackValid(f.getInventory().getResult()))
                     return;
@@ -414,9 +415,10 @@ public class Pipes extends AbstractCraftBookMechanic {
                             leftovers.add(ItemUtil.addToStack(f.getInventory().getResult(), item));
                     }
                 } else f.getInventory().setResult(null);
+                f.update();
             } else if (fac.getType() == Material.JUKEBOX) {
 
-                Jukebox juke = (Jukebox) fac.getState();
+                Jukebox juke = (Jukebox) fac.getState(false);
 
                 if (juke.getPlaying() != Material.AIR) {
                     items.add(new ItemStack(juke.getPlaying()));

@@ -12,6 +12,7 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -27,14 +28,18 @@ public class RedstonePowerListener implements Listener {
 
     private final Set<Block> toCheck = new HashSet<>();
 
+    private boolean ignore = false;
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPhysics(BlockPhysicsEvent event) {
+        if (ignore) return;
         final Block block = event.getBlock();
         toCheck.add(block);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onRedstone(BlockRedstoneEvent event) {
+        if (ignore) return;
         Block source = event.getBlock();
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
@@ -50,7 +55,9 @@ public class RedstonePowerListener implements Listener {
 
     @EventHandler
     public void onTick(ServerTickEndEvent event) {
+        ignore = true;
         toCheck.forEach(this::check);
+        ignore = false;
         toCheck.clear();
     }
 

@@ -487,6 +487,8 @@ public final class ItemUtil {
                 return new ItemStack(Material.POPPED_CHORUS_FRUIT);
             case KELP:
                 return new ItemStack(Material.DRIED_KELP);
+            case ROTTEN_FLESH:
+                return new ItemStack(Material.LEATHER);
             default:
                 return null;
         }
@@ -630,6 +632,12 @@ public final class ItemUtil {
                 return new ItemStack(Material.POPPED_CHORUS_FRUIT);
             case SEA_PICKLE:
                 return new ItemStack(Material.LIME_DYE);
+            case RAW_IRON_BLOCK:
+                return new ItemStack(Material.IRON_BLOCK);
+            case RAW_GOLD_BLOCK:
+                return new ItemStack(Material.GOLD_BLOCK);
+            case RAW_COPPER_BLOCK:
+                return new ItemStack(Material.COPPER_BLOCK);
             default:
                 if (Tag.LOGS.isTagged(item.getType())) {
                     return new ItemStack(Material.CHARCOAL);

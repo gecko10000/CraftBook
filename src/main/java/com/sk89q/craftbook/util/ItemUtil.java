@@ -638,6 +638,8 @@ public final class ItemUtil {
                 return new ItemStack(Material.GOLD_BLOCK);
             case RAW_COPPER_BLOCK:
                 return new ItemStack(Material.COPPER_BLOCK);
+            case TOTEM_OF_UNDYING:
+                return new ItemStack(Material.GOLD_INGOT);
             default:
                 if (Tag.LOGS.isTagged(item.getType())) {
                     return new ItemStack(Material.CHARCOAL);

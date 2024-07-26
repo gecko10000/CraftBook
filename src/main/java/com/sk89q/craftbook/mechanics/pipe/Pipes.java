@@ -1,5 +1,6 @@
 package com.sk89q.craftbook.mechanics.pipe;
 
+import com.destroystokyo.paper.MaterialSetTag;
 import com.sk89q.craftbook.AbstractCraftBookMechanic;
 import com.sk89q.craftbook.ChangedSign;
 import com.sk89q.craftbook.CraftBookPlayer;
@@ -41,14 +42,8 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Pipes extends AbstractCraftBookMechanic {
 
@@ -130,6 +125,27 @@ public class Pipes extends AbstractCraftBookMechanic {
         return null;
     }
 
+    private final MaterialTagsFinder finder = new MaterialTagsFinder();
+
+    private final Set<ItemStack> parseFilter(ChangedSign sign, int lineNumber) {
+        Set<Material> allMaterials = new HashSet<>();
+        Set<ItemStack> allItems = new HashSet<>();
+        for (String line : RegexUtil.COMMA_PATTERN.split(sign.getLine(lineNumber))) {
+            if (line.isBlank()) continue;
+            String trim = line.trim();
+            if (trim.charAt(0) == '#') {
+                MaterialSetTag tag = finder.getTag(trim.substring(1));
+                if (tag != null) {
+                    allMaterials.addAll(tag.getValues());
+                }
+            } else {
+                allItems.add(ItemSyntax.getItem(trim));
+            }
+        }
+        allItems.addAll(allMaterials.stream().map(ItemStack::new).collect(Collectors.toSet()));
+        return allItems;
+    }
+
     private void searchNearbyPipes(Block block, Set<Vector> visitedPipes, List<ItemStack> items) {
         Deque<Block> searchQueue = new ArrayDeque<>();
         searchQueue.addFirst(block);
@@ -146,12 +162,8 @@ public class Pipes extends AbstractCraftBookMechanic {
                 HashSet<ItemStack> pExceptions = new HashSet<>();
 
                 if(sign != null) {
-                    for(String line3 : RegexUtil.COMMA_PATTERN.split(sign.getLine(2))) {
-                        pFilters.add(ItemSyntax.getItem(line3.trim()));
-                    }
-                    for(String line4 : RegexUtil.COMMA_PATTERN.split(sign.getLine(3))) {
-                        pExceptions.add(ItemSyntax.getItem(line4.trim()));
-                    }
+                    pFilters.addAll(parseFilter(sign, 2));
+                    pExceptions.addAll(parseFilter(sign, 3));
 
                     pFilters.removeAll(Collections.<ItemStack>singleton(null));
                     pExceptions.removeAll(Collections.<ItemStack>singleton(null));
@@ -202,12 +214,8 @@ public class Pipes extends AbstractCraftBookMechanic {
                 HashSet<ItemStack> pExceptions = new HashSet<>();
 
                 if(sign != null) {
-                    for(String line3 : RegexUtil.COMMA_PATTERN.split(sign.getLine(2))) {
-                        pFilters.add(ItemSyntax.getItem(line3.trim()));
-                    }
-                    for(String line4 : RegexUtil.COMMA_PATTERN.split(sign.getLine(3))) {
-                        pExceptions.add(ItemSyntax.getItem(line4.trim()));
-                    }
+                    pFilters.addAll(parseFilter(sign, 2));
+                    pExceptions.addAll(parseFilter(sign, 3));
 
                     pFilters.removeAll(Collections.<ItemStack>singleton(null));
                     pExceptions.removeAll(Collections.<ItemStack>singleton(null));
@@ -328,12 +336,8 @@ public class Pipes extends AbstractCraftBookMechanic {
         ChangedSign sign = getSignOnPiston(block);
 
         if(sign != null) {
-            for(String line3 : RegexUtil.COMMA_PATTERN.split(sign.getLine(2))) {
-                filters.add(ItemSyntax.getItem(line3.trim()));
-            }
-            for(String line4 : RegexUtil.COMMA_PATTERN.split(sign.getLine(3))) {
-                exceptions.add(ItemSyntax.getItem(line4.trim()));
-            }
+            filters.addAll(parseFilter(sign, 2));
+            exceptions.addAll(parseFilter(sign, 3));
         }
 
         filters.removeAll(Collections.<ItemStack>singleton(null));

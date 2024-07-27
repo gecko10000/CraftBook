@@ -125,7 +125,7 @@ public class Pipes extends AbstractCraftBookMechanic {
         return null;
     }
 
-    private final MaterialTagsFinder finder = new MaterialTagsFinder();
+    private final MaterialSetTagFinder finder = new MaterialSetTagFinder();
 
     private final Set<ItemStack> parseFilter(ChangedSign sign, int lineNumber) {
         Set<Material> allMaterials = new HashSet<>();

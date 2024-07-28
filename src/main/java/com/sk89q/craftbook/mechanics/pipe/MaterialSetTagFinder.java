@@ -39,7 +39,6 @@ public class MaterialSetTagFinder {
         try {
             Field field = Tag.class.getDeclaredField(key);
             Tag<?> tag = (Tag<?>) field.get(null);
-            System.out.println(tag);
             Material[] materials = tag.getValues().toArray(new Material[0]);
             return new MaterialSetTag(randomKey(), materials);
         } catch (NoSuchFieldException | ArrayStoreException ex) {
